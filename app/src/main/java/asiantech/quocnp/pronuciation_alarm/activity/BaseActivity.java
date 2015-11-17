@@ -10,6 +10,7 @@ import asiantech.quocnp.pronuciation_alarm.App;
 
 
 /**
+ * @author quocnp
  * Created by tientun on 3/5/15.
  */
 @EActivity
