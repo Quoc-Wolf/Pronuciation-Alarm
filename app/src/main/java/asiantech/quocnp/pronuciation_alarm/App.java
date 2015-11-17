@@ -18,7 +18,7 @@ import asiantech.quocnp.pronuciation_alarm.activity.BaseActivity;
 
 /**
  * Created by tientun on 3/4/15.
- * ChekiAlarm application
+ *
  */
 @EApplication
 public class App extends SugarApp {
@@ -44,7 +44,7 @@ public class App extends SugarApp {
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
-        conf.locale = new Locale("ja");
+        conf.locale = new Locale("en");
         res.updateConfiguration(conf, dm);
 
         //Setup universal image loader
