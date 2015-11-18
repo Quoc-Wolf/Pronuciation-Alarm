@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MainFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
-    android:clickable="true"
-    tools:context="asiantech.quocnp.pronuciation_alarm.fragment.ChildFragment">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btnBack"
+    <include layout="@layout/content_fragment_child" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:text="back" />
+        android:layout_gravity="bottom|end|right"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_lock_power_off"
+        app:elevation="5dp"
+        tools:ignore="RtlHardcoded" />
 
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
