@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "name": "Home",
-    "pronunciation": "/hoʊm/",
+    "name": "Hi",
+    "pronunciation": "/hi/",
     "icon": "ic_home"
   },
   {
     "id": 2,
-    "name": "Tree",
-    "pronunciation": "/tri:/",
+    "name": "Because",
+    "pronunciation": "/bi'kɔz/",
     "icon": "ic_tree"
   },
   {
@@ -16,5 +16,11 @@
     "name": "Human",
     "pronunciation": "/'hju:mən/",
     "icon": "ic_human"
+  },
+  {
+    "id": 4,
+    "name": "Tree",
+    "pronunciation": "/tri:/",
+    "icon": "ic_tree"
   }
 ]
