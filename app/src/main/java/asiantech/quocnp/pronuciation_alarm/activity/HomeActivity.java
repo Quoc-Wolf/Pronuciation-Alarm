@@ -26,4 +26,5 @@ public class HomeActivity extends BaseActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.frame_layout, mMainFragment, "MainFragment").commit();
     }
+
 }

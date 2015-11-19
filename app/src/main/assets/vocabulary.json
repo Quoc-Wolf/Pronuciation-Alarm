@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Home",
+    "pronunciation": "/hoʊm/",
+    "icon": "ic_home"
+  },
+  {
+    "id": 2,
+    "name": "Tree",
+    "pronunciation": "/tri:/",
+    "icon": "ic_tree"
+  },
+  {
+    "id": 3,
+    "name": "Human",
+    "pronunciation": "/'hju:mən/",
+    "icon": "ic_human"
+  }
+]
