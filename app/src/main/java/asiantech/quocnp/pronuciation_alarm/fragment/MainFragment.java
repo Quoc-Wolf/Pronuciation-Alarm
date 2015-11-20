@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -12,6 +13,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import asiantech.quocnp.pronuciation_alarm.R;
+import asiantech.quocnp.pronuciation_alarm.activity.HomeActivity;
+import asiantech.quocnp.pronuciation_alarm.untils.SettingStore;
 
 
 /**
@@ -21,12 +24,16 @@ import asiantech.quocnp.pronuciation_alarm.R;
 @SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_main)
 public class MainFragment extends BaseFragment {
+    private static final int TIME_DELAY_FOR_NEXT_CLICK = 500;
     //Toolbar of root (main)
     @ViewById(R.id.toolbar)
     Toolbar mToolbar;
     @ViewById(R.id.fabSearch)
     FloatingActionButton mFab;
-
+    @ViewById(R.id.btnDemo)
+    Button mBtnDemo;
+    //check no click double
+    private boolean isCheckDoubleClick;
 
     //FloatingActionButton for Search list
     @Click(R.id.fabSearch)
@@ -39,7 +46,17 @@ public class MainFragment extends BaseFragment {
     //click demo
     @Click(R.id.btnDemo)
     protected void clickDemo() {
-        addChildFragment(ChildFragment_.builder().build());
+        if (!isCheckDoubleClick) {
+            SettingStore.setIdFragment(getActivity(), HomeActivity.currentFragment.CHILD_FRAGMENT.getValueEnum());
+            addChildFragment(ChildFragment_.builder().build());
+            isCheckDoubleClick = true;
+            mBtnDemo.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isCheckDoubleClick = false;
+                }
+            }, TIME_DELAY_FOR_NEXT_CLICK);
+        }
     }
 
     @AfterViews

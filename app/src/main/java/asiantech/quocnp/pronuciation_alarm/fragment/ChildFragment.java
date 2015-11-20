@@ -1,8 +1,17 @@
 package asiantech.quocnp.pronuciation_alarm.fragment;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.speech.RecognizerIntent;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,18 +28,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import asiantech.quocnp.pronuciation_alarm.R;
 import asiantech.quocnp.pronuciation_alarm.models.database.Vocabulary;
+import asiantech.quocnp.pronuciation_alarm.untils.SettingStore;
 
 /**
+ * This is Child Fragment
+ * @author quocnp
  * A simple {@link BaseFragment} subclass.
  */
 
 @SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_child)
 public class ChildFragment extends BaseFragment {
+    //this Log Tag
     private static final String TAG = ChildFragment.class.getSimpleName();
+    //int result for speed to text
+    private static final int REQUEST_CODE_RESULT = 777;
 
     @ViewById(R.id.tvNameWord)
     TextView mTvNameWord;
@@ -39,14 +55,21 @@ public class ChildFragment extends BaseFragment {
     @ViewById(R.id.imgOfWord)
     ImageView mImgOfWord;
     List<Vocabulary> mVocabularies;
-    //count size of list vocabularies
+    Context mContext;
+    //count index of list vocabularies
     private int mCount = 0;
+    private Handler mHandler;
 
     /**
      * This is constructor Child Fragment
      */
     public ChildFragment() {
         // Required empty public constructor
+    }
+
+    @Click(R.id.imgViewSpeed)
+    protected void setDoSpeed() {
+        speak();
     }
 
     //Demo click next
@@ -57,8 +80,11 @@ public class ChildFragment extends BaseFragment {
 
     @AfterViews
     protected void afterView() {
+        //create get Json data
         initDataVocabulary();
         setNext();
+        //handle popchild Fragment
+        handlerBackPopChilFragment();
     }
 
     /**
@@ -77,8 +103,22 @@ public class ChildFragment extends BaseFragment {
             mCount++;
         } else {
             //back Frangment Main
-            popChildFragment();
+            mHandler.sendMessage(new Message());
         }
+    }
+
+    /**
+     * This is handler backpop childfragment
+     */
+    private void handlerBackPopChilFragment() {
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                popChildFragment();
+                SettingStore.setIdFragment(getActivity(), 0);
+            }
+        };
     }
 
     /**
@@ -135,4 +175,108 @@ public class ChildFragment extends BaseFragment {
         return json;
 
     }
+
+    /**
+     * Speed to text  RecognizerIntent
+     */
+    public void speak() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass()
+                .getPackage().getName());
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
+                Locale.ENGLISH.toString());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                Locale.ENGLISH.toString());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity()
+                .getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,
+                "true");
+        intent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES",
+                new String[]{"en"});
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        startActivityForResult(intent, REQUEST_CODE_RESULT);
+    }
+
+    /**
+     * // Su kien nhan lai ket qua
+     * @param requestCode int REQUEST_CODE_RESULT
+     * @param resultCode resultCode RESULT_OK
+     * @param data  intent
+     */
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_RESULT)
+            if (resultCode == getActivity().RESULT_OK) {
+                final ArrayList<String> textMatchList = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                if (!textMatchList.isEmpty()) {
+                    if (textMatchList.get(0).contains("search")) {
+                        String searchQuery = textMatchList.get(0).replace(
+                                "search", " ");
+                        Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
+                        search.putExtra(SearchManager.QUERY, searchQuery);
+                        startActivity(search);
+                    } else {
+                        // Hien thi ket qua
+                        Log.i("TAG", "text--" + mTvNameWord.getText() + "//speed--" + textMatchList.get(0));
+                        if (mTvNameWord.getText().toString().equalsIgnoreCase(textMatchList.get(0))) {
+                            getMainActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getMainActivity(), textMatchList.get(0), Toast.LENGTH_SHORT).show();
+                                    setNext();
+                                }
+                            });
+
+                        } else {
+                            getMainActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getMainActivity(), textMatchList.get(0), Toast.LENGTH_SHORT).show();
+                                    showDialogWrong(textMatchList.get(0));
+                                }
+                            });
+                        }
+                    }
+                }
+                // Cac truong hop loi
+            } else if (resultCode == RecognizerIntent.RESULT_AUDIO_ERROR) {
+                // showToastMessage("Audio Error");
+            } else if (resultCode == RecognizerIntent.RESULT_CLIENT_ERROR) {
+                // showToastMessage("Client Error");
+            } else if (resultCode == RecognizerIntent.RESULT_NETWORK_ERROR) {
+                // showToastMessage("Network Error");
+            } else if (resultCode == RecognizerIntent.RESULT_NO_MATCH) {
+                // showToastMessage("No Match");
+            } else if (resultCode == RecognizerIntent.RESULT_SERVER_ERROR) {
+                // showToastMessage("Server Error");
+            }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * this is method show dialog check ansewer when you speed this word
+     * User AlertDialog
+     */
+    private void showDialogWrong(String textResult) {
+        new AlertDialog.Builder(getMainActivity())
+                .setTitle("Result...")
+                .setMessage("You are wrong! \n" + "This is a word you say:" + textResult)
+                .setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        speak();
+                    }
+                })
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                }).create().show();
+    }
+
 }
