@@ -18,33 +18,43 @@ import lombok.Getter;
 
 @EActivity(R.layout.activity_home)
 public class HomeActivity extends BaseActivity {
+    //this is set time delay exit app
     private final static int TIME_DELAY_EXIT_APP = 2000;
-
+    //this is check tag  home
     private static final String TAG = HomeActivity.class.getSimpleName();
     //This is Fragment Main
     @FragmentByTag("MainFragment")
     MainFragment mMainFragment;
 
-    boolean doubleBackToExitPressedOnce = false;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     void afterView() {
         if (mMainFragment == null) {
             mMainFragment = MainFragment_.builder().build();
         }
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.frame_layout, mMainFragment, "MainFragment").commit();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.frame_layout, mMainFragment, "MainFragment").commit();
         SettingStore.setIdFragment(this, currentFragment.MAIN_FRAGMENT.getValueEnum());
     }
 
-    //check when click button back of Devices
+    /**
+     * This is check back button
+     *
+     * @param keyCode int
+     * @param event   key event
+     * @return true
+     * check when click button back of Devices
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+        //check click back button
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //home fragment
             if (SettingStore.getIdFragment(this) == currentFragment.MAIN_FRAGMENT.getValueEnum()) {
                 onBackPressed();
             } else {
+                //child fragment
                 showDialogExit();
             }
         }
@@ -62,8 +72,7 @@ public class HomeActivity extends BaseActivity {
             super.onBackPressed();
             return;
         }
-
-        this.doubleBackToExitPressedOnce = true;
+        doubleBackToExitPressedOnce = true;
         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
@@ -104,7 +113,10 @@ public class HomeActivity extends BaseActivity {
         @Getter
         int valueEnum;
 
-        // Enum constructor
+        /**
+         * Enum constructor
+         * @param value int
+         */
         currentFragment(int value) {
             valueEnum = value;
         }

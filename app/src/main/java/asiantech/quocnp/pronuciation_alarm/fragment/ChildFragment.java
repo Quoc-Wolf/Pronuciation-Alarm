@@ -35,13 +35,17 @@ import asiantech.quocnp.pronuciation_alarm.models.database.Vocabulary;
 import asiantech.quocnp.pronuciation_alarm.untils.SettingStore;
 
 /**
+ * This is Child Fragment
+ * @author quocnp
  * A simple {@link BaseFragment} subclass.
  */
 
 @SuppressWarnings("ALL")
 @EFragment(R.layout.fragment_child)
 public class ChildFragment extends BaseFragment {
+    //this Log Tag
     private static final String TAG = ChildFragment.class.getSimpleName();
+    //int result for speed to text
     private static final int REQUEST_CODE_RESULT = 777;
 
     @ViewById(R.id.tvNameWord)
@@ -52,12 +56,9 @@ public class ChildFragment extends BaseFragment {
     ImageView mImgOfWord;
     List<Vocabulary> mVocabularies;
     Context mContext;
-    //count size of list vocabularies
+    //count index of list vocabularies
     private int mCount = 0;
     private Handler mHandler;
-
-    private Intent mIntent;
-
 
     /**
      * This is constructor Child Fragment
@@ -106,6 +107,9 @@ public class ChildFragment extends BaseFragment {
         }
     }
 
+    /**
+     * This is handler backpop childfragment
+     */
     private void handlerBackPopChilFragment() {
         mHandler = new Handler() {
             @Override
@@ -172,28 +176,37 @@ public class ChildFragment extends BaseFragment {
 
     }
 
+    /**
+     * Speed to text  RecognizerIntent
+     */
     public void speak() {
-        mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass()
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass()
                 .getPackage().getName());
-        mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
                 Locale.ENGLISH.toString());
-        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
                 Locale.ENGLISH.toString());
-        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-        mIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity()
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity()
                 .getPackageName());
-        mIntent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,
+        intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,
                 "true");
-        mIntent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES",
+        intent.putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES",
                 new String[]{"en"});
-        mIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        startActivityForResult(mIntent, REQUEST_CODE_RESULT);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        startActivityForResult(intent, REQUEST_CODE_RESULT);
     }
 
-    // Su kien nhan lai ket qua
+    /**
+     * // Su kien nhan lai ket qua
+     * @param requestCode int REQUEST_CODE_RESULT
+     * @param resultCode resultCode RESULT_OK
+     * @param data  intent
+     */
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_RESULT)
@@ -210,7 +223,7 @@ public class ChildFragment extends BaseFragment {
                         startActivity(search);
                     } else {
                         // Hien thi ket qua
-                        Log.i("FOX", "text--" + mTvNameWord.getText() + "//speed--" + textMatchList.get(0));
+                        Log.i("TAG", "text--" + mTvNameWord.getText() + "//speed--" + textMatchList.get(0));
                         if (mTvNameWord.getText().toString().equalsIgnoreCase(textMatchList.get(0))) {
                             getMainActivity().runOnUiThread(new Runnable() {
                                 @Override
